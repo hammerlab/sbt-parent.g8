@@ -1,0 +1,32 @@
+language: scala
+jdk:
+  - oraclejdk8
+
+$if(scala211.truthy)$
+$if(scala212.truthy)$
+scala:
+  - 2.11.12
+  - 2.12.4
+
+$else$
+scala: 2.11.12
+
+$endif$
+$else$
+scala: 2.12.4
+$endif$
+
+script: sbt ++\$TRAVIS_SCALA_VERSION clean coverageTest
+
+cache:
+  directories:
+  - \$HOME/.ivy2/cache
+  - \$HOME/.sbt/boot/
+  - \$HOME/.zinc
+
+after_success: sbt ++\$TRAVIS_SCALA_VERSION travis-report
+
+before_cache:
+  # Tricks to avoid unnecessary cache updates
+  - find \$HOME/.ivy2 -name "ivydata-*.properties" -delete
+  - find \$HOME/.sbt -name "*.lock" -delete
